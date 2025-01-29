@@ -106,6 +106,10 @@ class DataProcessing(APIView):
                 raise ValueError("Некорректная информация по датчикам")
 
             created_at = data.get("time")[0]
+
+            if not created_at:
+                raise ValueError("Нет времени")
+
             created_at = datetime.datetime.strptime(created_at, '%Y/%m/%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
 
             modem, created = Modem.objects.get_or_create(
