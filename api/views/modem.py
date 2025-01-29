@@ -1,14 +1,12 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import serializers
+
 
 from api.models import Modem as m
+from api.serializers import ModemSerializer
 
-class ModemSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = m
-    exclude = ["id"]
+
 
 class Modems(APIView):
 

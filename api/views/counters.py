@@ -1,13 +1,11 @@
-from rest_framework import serializers, status
+from rest_framework import  status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.models import Counter as c
+from api.serializers import CounterSerializers
 
-class CounterSerializers(serializers.ModelSerializer):
-  class Meta:
-    model = c
-    exclude = ["id"]
+
 
 class Counters(APIView):
 

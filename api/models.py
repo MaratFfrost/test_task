@@ -1,6 +1,7 @@
 from django.db import models
 
 class Modem(models.Model):
+
   mac_address = models.CharField(unique=True, max_length=17)
   created_ad = models.DateTimeField()
   updated_at = models.DateTimeField(auto_now=True)
@@ -9,7 +10,8 @@ class Modem(models.Model):
     return self.mac_address
 
 class Sensor(models.Model):
-  mac_address = models.CharField(unique=True, max_length=17)
+
+  mac_address = models.CharField(max_length=17)
   vibration = models.JSONField()
   temperature = models.JSONField()
   modem_id = models.ForeignKey(Modem, on_delete=models.CASCADE, related_name='sensors')
@@ -21,6 +23,7 @@ class Sensor(models.Model):
 
 class Counter(models.Model):
 
+  modem_id = models.ForeignKey(Modem, on_delete=models.CASCADE, related_name='counters')
   address = models.CharField(max_length=50)
   energy = models.JSONField()
   cos_fi_a = models.JSONField()
@@ -48,8 +51,6 @@ class Counter(models.Model):
   reactive_power_a = models.JSONField()
   reactive_power_b = models.JSONField()
   reactive_power_c = models.JSONField()
-  timestamp = models.JSONField()
-  modem_id = models.ForeignKey(Modem, on_delete=models.CASCADE, related_name='counters')
   created_at = models.DateTimeField()
   updated_at = models.DateTimeField(auto_now=True)
 

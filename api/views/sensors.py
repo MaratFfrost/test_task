@@ -1,14 +1,11 @@
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework import serializers
 from rest_framework.response import Response
 
 from api.models import Sensor as s
+from api.serializers import SensorSerializer
 
-class SensorSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = s
-    exclude = ["id"]
+
 
 class Sensors(APIView):
 
