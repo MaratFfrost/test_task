@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:16
+    container_name: test_db
+    env_file:
+      - .env-non-dev
+    ports:
+      - "5433:5432"
+
+  test:
+    image: test_image
+    build:
+      context: .
+    container_name: test_app
+    env_file:
+      - .env-non-dev
+    depends_on:
+      - db  # Указываем зависимость от базы данных
+    command: >
+      sh -c "
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+    ports:
+      - "7777:8000"  # Прокидываем порт для приложения
