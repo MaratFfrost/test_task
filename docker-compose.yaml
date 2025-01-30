@@ -15,11 +15,11 @@ services:
     env_file:
       - .env-non-dev
     depends_on:
-      - db  # Указываем зависимость от базы данных
+      - db  
     command: >
       sh -c "
       python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8000
       "
     ports:
-      - "7777:8000"  # Прокидываем порт для приложения
+      - "7777:8000" 
