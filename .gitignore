@@ -1,1 +1,5 @@
 .env
+api/migrations/*
+!api/migrations/__init__.py
+__pycache__/
+.idea/
