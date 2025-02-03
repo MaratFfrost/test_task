@@ -16,8 +16,9 @@ services:
       - .env-non-dev
     depends_on:
       - db  
-    command: >
+    command: > #чтобы избежать добавления миграционных файлов
       sh -c "
+      python manage.py makemigrations &&
       python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8000
       "

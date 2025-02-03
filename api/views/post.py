@@ -105,7 +105,8 @@ class DataProcessing(APIView):
             if not self.is_valid_sensors(filt_data):
                 raise ValueError("Некорректная информация по датчикам")
 
-            created_at = data.get("time")[0]
+            # более актуальное время последний элемент
+            created_at = data.get("time")[-1]
 
             if not created_at:
                 raise ValueError("Нет времени")
@@ -117,57 +118,60 @@ class DataProcessing(APIView):
                 defaults={'created_ad': created_at}
             )
 
+            # нужно записывать только одно значение соответствующее времени
             for counter in data["counters"]:
-                counter_data = {
-                    'modem_id': modem,
-                    'address': counter.get("address"),
-                    'energy': counter.get("energy"),
-                    'cos_fi_a': counter.get("cos_fi_a"),
-                    'cos_fi_b': counter.get("cos_fi_b"),
-                    'cos_fi_c': counter.get("cos_fi_c"),
-                    'cos_fi_common': counter.get("cos_fi_common"),
-                    'freq_a': counter.get("freq_a"),
-                    'freq_b': counter.get("freq_b"),
-                    'freq_c': counter.get("freq_c"),
-                    'freq_common': counter.get("freq_common"),
-                    'voltage_a': counter.get("voltage_a"),
-                    'voltage_b': counter.get("voltage_b"),
-                    'voltage_c': counter.get("voltage_c"),
-                    'voltage_common': counter.get("voltage_common"),
-                    'current_a': counter.get("current_a"),
-                    'current_b': counter.get("current_b"),
-                    'current_c': counter.get("current_c"),
-                    'current_common': counter.get("current_common"),
-                    'whole_power_a': counter.get("whole_power_a"),
-                    'whole_power_b': counter.get("whole_power_b"),
-                    'whole_power_c': counter.get("whole_power_c"),
-                    'active_power_a': counter.get("active_power_a"),
-                    'active_power_b': counter.get("active_power_b"),
-                    'active_power_c': counter.get("active_power_c"),
-                    'reactive_power_a': counter.get("reactive_power_a"),
-                    'reactive_power_b': counter.get("reactive_power_b"),
-                    'reactive_power_c': counter.get("reactive_power_c"),
-                    'created_at': created_at
-                }
-                Counter.objects.update_or_create(
-                    modem_id=modem,
-                    address=counter_data['address'],
-                    defaults=counter_data
-                )
+                if counter.get("energy"):
+                    counter_data = {
+                        'modem_id': modem,
+                        'address': counter.get("address")[-1],
+                        'energy': counter.get("energy")[-1],
+                        'cos_fi_a': counter.get("cos_fi_a")[-1],
+                        'cos_fi_b': counter.get("cos_fi_b")[-1],
+                        'cos_fi_c': counter.get("cos_fi_c")[-1],
+                        'cos_fi_common': counter.get("cos_fi_common")[-1],
+                        'freq_a': counter.get("freq_a")[-1],
+                        'freq_b': counter.get("freq_b")[-1],
+                        'freq_c': counter.get("freq_c")[-1],
+                        'freq_common': counter.get("freq_common")[-1],
+                        'voltage_a': counter.get("voltage_a")[-1],
+                        'voltage_b': counter.get("voltage_b")[-1],
+                        'voltage_c': counter.get("voltage_c")[-1],
+                        'voltage_common': counter.get("voltage_common")[-1],
+                        'current_a': counter.get("current_a")[-1],
+                        'current_b': counter.get("current_b")[-1],
+                        'current_c': counter.get("current_c")[-1],
+                        'current_common': counter.get("current_common")[-1],
+                        'whole_power_a': counter.get("whole_power_a")[-1],
+                        'whole_power_b': counter.get("whole_power_b")[-1],
+                        'whole_power_c': counter.get("whole_power_c")[-1],
+                        'active_power_a': counter.get("active_power_a")[-1],
+                        'active_power_b': counter.get("active_power_b")[-1],
+                        'active_power_c': counter.get("active_power_c")[-1],
+                        'reactive_power_a': counter.get("reactive_power_a")[-1],
+                        'reactive_power_b': counter.get("reactive_power_b")[-1],
+                        'reactive_power_c': counter.get("reactive_power_c")[-1],
+                        'created_at': created_at
+                    }
+                    Counter.objects.update_or_create(
+                        modem_id=modem,
+                        address=counter_data['address'],
+                        defaults=counter_data
+                    )
 
             for i in range(1, max(len(filt_data) // 3, 2) + 1):
-                sensor_data = {
-                    'mac_address': data.get(f"name" + str(i)),
-                    'vibration': data.get(f"vibrations" + str(i)),
-                    'temperature': data.get(f"temperature" + str(i)),
-                    'modem_id': modem,
-                    'created_ad': created_at
-                }
-                Sensor.objects.update_or_create(
-                    mac_address=sensor_data['mac_address'],
-                    modem_id=modem,
-                    defaults=sensor_data
-                )
+                if data.get(f"name" + str(i)):
+                    sensor_data = {
+                        'mac_address': data.get(f"name" + str(i)),
+                        'vibration': data.get(f"vibrations" + str(i))[-1],
+                        'temperature': data.get(f"temperature" + str(i))[-1],
+                        'modem_id': modem,
+                        'created_ad': created_at
+                    }
+                    Sensor.objects.update_or_create(
+                        mac_address=sensor_data['mac_address'],
+                        modem_id=modem,
+                        defaults=sensor_data
+                    )
 
             return Response({"message": "Data processed or updated successfully"}, status=status.HTTP_201_CREATED)
 
