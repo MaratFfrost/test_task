@@ -159,7 +159,7 @@ class DataProcessing(APIView):
                     )
 
             for i in range(1, max(len(filt_data) // 3, 2) + 1):
-                if data.get(f"name" + str(i)):
+                if data.get(f"vibrations" + str(i)):
                     sensor_data = {
                         'mac_address': data.get(f"name" + str(i)),
                         'vibration': data.get(f"vibrations" + str(i))[-1],
